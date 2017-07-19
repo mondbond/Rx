@@ -1,0 +1,36 @@
+package com.example.mond.rx.di;
+
+import android.content.Context;
+
+import com.example.mond.rx.App;
+
+import javax.inject.Named;
+
+import dagger.Module;
+import dagger.Provides;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+@Module
+public class AppModule {
+
+    private App app;
+
+    public AppModule(App app) {
+        this.app = app;
+    }
+
+    @Provides
+//    @Named("lcboAPI")
+    Retrofit providesLcboApiRetrofit() {
+        return new Retrofit.Builder()
+                .baseUrl("https://lcboapi.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    @Provides
+    Context providesContext() {
+        return app.getApplicationContext();
+    }
+}

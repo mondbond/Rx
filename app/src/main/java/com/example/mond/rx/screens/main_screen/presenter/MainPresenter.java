@@ -28,6 +28,7 @@ public class MainPresenter implements BasePresenter<MainView> {
     private Retrofit mRetrofit;
     private Repository mRepository;
 
+    // TODO: 20/07/17 use composite disposable
     private Disposable mDisposableStore;
     private Disposable mDisposableProduct;
 
@@ -47,6 +48,7 @@ public class MainPresenter implements BasePresenter<MainView> {
         mView = null;
     }
 
+    // TODO: 20/07/17 add possibility to load product for store when you click on it
     public void setUpData() throws IOException {
         Observable<Store> storesObservable = mRepository.getStoresByFilter(mRetrofit,
                 new StoreFilterByFirstLetters(STORE_COUNT, STORE_SEARCH));
@@ -54,6 +56,7 @@ public class MainPresenter implements BasePresenter<MainView> {
                 = (Observable<Product>) storesObservable
 //                TODO: is this a good exp to use flatMap operator in such case ?
                 .flatMap(stores -> {
+                    // TODO: 20/07/17 why you need the catch here? throw exception and handle when subscribe on it
                     Observable<Product> products = null;
                     try {
                         products = mRepository.getProductsByFilter(mRetrofit, stores.getId(),

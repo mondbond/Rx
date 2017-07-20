@@ -24,6 +24,7 @@ public class AppModule {
 //    @Named("lcboAPI")
     Retrofit providesLcboApiRetrofit() {
         return new Retrofit.Builder()
+                // TODO: 20/07/17 hide base url api keys in gradle file and use BuildConfig class
                 .baseUrl("https://lcboapi.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

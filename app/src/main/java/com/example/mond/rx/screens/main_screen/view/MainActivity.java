@@ -63,6 +63,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onResume() {
         super.onResume();
+        // TODO: 20/07/17  attach/detach should be in onStart/onStop
         mPresenter.onAttach(this);
     }
 
@@ -82,7 +83,9 @@ public class MainActivity extends BaseActivity implements MainView {
             }
         }
 
+        // TODO: 20/07/17 how presenter can be null?
         if (mPresenter != null) {
+            // TODO: 20/07/17 its to messy with exceptions
             try {
                 mPresenter.setUpData();
             } catch (IOException e) {
@@ -94,6 +97,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     public void setStore(Store store) {
         mStores.add(store);
+        // TODO: 20/07/17 init adapters once with empty data when you prepare recycler view, then you don't need null check
         if (mStoreAdapter == null) {
             mStoreAdapter = new StoreAdapter(mStores);
         } else {

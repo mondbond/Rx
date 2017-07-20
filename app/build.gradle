@@ -3,6 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
+    //    todo move lib version numbers into root build gradle so it can be applied to entire project
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
@@ -24,17 +25,19 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
+// todo move to root build.gradle
 def butterknifeVersion = '8.6.0'
 def duggerVersion = '2.8'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+//    todo move lib version numbers into root build gradle so it can be applied to entire project
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 
+//    todo don't use '+' in versions
     compile 'com.android.support:cardview-v7:26.+'
     compile 'com.android.support:recyclerview-v7:26.+'
 

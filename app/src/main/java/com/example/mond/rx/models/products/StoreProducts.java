@@ -7,7 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
+// TODO: 20/07/17 separate data models from presentation models, don't need to know about gson & retrofit
 public class StoreProducts implements Parcelable {
 
     @SerializedName("status")

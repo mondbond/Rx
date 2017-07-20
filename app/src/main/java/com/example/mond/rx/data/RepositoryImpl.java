@@ -22,6 +22,8 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+//todo clean up the mess
+// TODO: 20/07/17 separate stores repository & products repository
 public class RepositoryImpl implements Repository {
 
     @Override
@@ -38,7 +40,7 @@ public class RepositoryImpl implements Repository {
 
                 Stores stores;
                 List<Result> results;
-
+                // TODO: 20/07/17 use rx functions, mappers, work in react way
                 while (count < filter.getCount() || isLastPage) {
                     stores = getStoresByRetrofit(retrofit, page);
                     if (stores != null) {
@@ -54,7 +56,9 @@ public class RepositoryImpl implements Repository {
                     }
                 }
             }
-        }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread());
+        })
+                // todo repository don't know about threads, just get data from retrofit, convert it to appropriate view and throw to others
+                .subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread());
     }
 
     private Stores getStoresByRetrofit(Retrofit retrofit, int page) {

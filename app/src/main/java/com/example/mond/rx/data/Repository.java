@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
 
 public interface Repository {
 //TODO: is it write way to make repository ?
+    // repository interface should be aware of data source (retrofit)
     Observable<Store> getStoresByFilter(final Retrofit retrofit, StoreFilter filter) throws IOException;
 
     Observable<Product> getProductsByFilter(

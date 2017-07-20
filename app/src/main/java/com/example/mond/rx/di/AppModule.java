@@ -36,6 +36,6 @@ public class AppModule {
 
     @Provides
     Repository providesLcboRepository() {
-        return new RepositoryImpl(providesContext());
+        return new RepositoryImpl();
     }
 }

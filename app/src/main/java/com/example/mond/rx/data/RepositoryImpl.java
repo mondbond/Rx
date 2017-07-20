@@ -1,8 +1,6 @@
 package com.example.mond.rx.data;
 
-import android.content.Context;
-
-import com.example.mond.rx.R;
+import com.example.mond.rx.Config;
 import com.example.mond.rx.filters.StoreFilter;
 import com.example.mond.rx.filters.ProductFilter;
 import com.example.mond.rx.models.products.StoreProducts;
@@ -23,12 +21,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class RepositoryImpl implements Repository {
-
-    private Context mContext;
-
-    public RepositoryImpl(Context context) {
-        mContext = context;
-    }
 
     @Override
     public Observable<Result> getStoresByFilter(final Retrofit retrofit, StoreFilter filter) throws IOException {
@@ -68,7 +60,7 @@ public class RepositoryImpl implements Repository {
         Response<Stores> response = null;
 
         try {
-            response = api.getStores(page, mContext.getResources().getString(R.string.lcbo_key)).execute();
+            response = api.getStores(page, Config.LCBO_KEY).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,7 +112,7 @@ public class RepositoryImpl implements Repository {
 
         try {
             response = api.getProductsByStore(String.valueOf(storeId), page,
-                    mContext.getResources().getString(R.string.lcbo_key)).execute();
+                    Config.LCBO_KEY).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

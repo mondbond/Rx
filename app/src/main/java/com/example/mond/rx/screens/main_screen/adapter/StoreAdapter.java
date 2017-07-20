@@ -50,6 +50,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        mStoreList.clear();
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.store_name)
         TextView storeName;

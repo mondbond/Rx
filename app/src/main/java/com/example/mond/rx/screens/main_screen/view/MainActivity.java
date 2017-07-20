@@ -39,7 +39,6 @@ public class MainActivity extends BaseActivity implements MainView {
     @BindView(R.id.btn_load)
     Button loadBtn;
 
-
     StoreAdapter mStoreAdapter;
     ProductsAdapter mProductsAdapter;
 
@@ -75,6 +74,14 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @OnClick(R.id.btn_load)
     public void getData() {
+        if(mStoreAdapter != null) {
+            if (!mStores.isEmpty() || !mProducts.isEmpty()) {
+                mPresenter.stopLoadingData();
+                mStoreAdapter.clear();
+                mProductsAdapter.clear();
+            }
+        }
+
         if (mPresenter != null) {
             try {
                 mPresenter.setUpData();

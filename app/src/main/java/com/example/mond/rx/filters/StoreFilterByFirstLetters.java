@@ -32,11 +32,11 @@ public class StoreFilterByFirstLetters implements StoreFilter {
     @Override
     public boolean isAppropriate(Result result) {
 
-        char[] exampleByChar = result.getName().toCharArray();
+        char[] nameByChar = result.getName().toCharArray();
         char[] conditionByChar = mCondition.toCharArray();
 
         for (int i = 0; i < mCondition.length(); ++i) {
-            if (!String.valueOf(exampleByChar[i]).equals(String.valueOf(conditionByChar[i]))) {
+            if (!String.valueOf(nameByChar[i]).equals(String.valueOf(conditionByChar[i]))) {
                 return false;
             }
         }

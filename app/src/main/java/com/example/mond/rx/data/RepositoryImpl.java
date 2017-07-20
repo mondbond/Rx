@@ -4,6 +4,8 @@ import com.example.mond.rx.Config;
 import com.example.mond.rx.filters.StoreFilter;
 import com.example.mond.rx.filters.ProductFilter;
 import com.example.mond.rx.models.products.StoreProducts;
+import com.example.mond.rx.models.simple_models.Product;
+import com.example.mond.rx.models.simple_models.Store;
 import com.example.mond.rx.models.stores.Result;
 import com.example.mond.rx.models.stores.Stores;
 import com.example.mond.rx.retrofit.LcboAPI;
@@ -23,13 +25,13 @@ import retrofit2.Retrofit;
 public class RepositoryImpl implements Repository {
 
     @Override
-    public Observable<Result> getStoresByFilter(final Retrofit retrofit, StoreFilter filter) throws IOException {
+    public Observable<Store> getStoresByFilter(final Retrofit retrofit, StoreFilter filter) throws IOException {
             if (filter == null) {
                 throw new NullPointerException("Filter is null");
             }
-        return Observable.create(new ObservableOnSubscribe<Result>() {
+        return Observable.create(new ObservableOnSubscribe<Store>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<Result> e) throws Exception {
+            public void subscribe(@NonNull ObservableEmitter<Store> e) throws Exception {
                 int page = 1;
                 int count = 0;
                 boolean isLastPage = false;
@@ -45,7 +47,7 @@ public class RepositoryImpl implements Repository {
                         for (Result item : results) {
                             if (filter.isAppropriate(item) && count < filter.getCount()) {
                                 ++count;
-                                e.onNext(item);
+                                e.onNext(new Store(item.getId(), item.getName()));
                             }
                         }
                         page++;
@@ -72,14 +74,14 @@ public class RepositoryImpl implements Repository {
     }
 
     @Override
-    public Observable<com.example.mond.rx.models.products.Result> getProductsByFilter(
+    public Observable<Product> getProductsByFilter(
             final Retrofit retrofit, int storeId, ProductFilter filter) throws IOException {
             if (filter == null) {
                 throw new NullPointerException("Filter is null");
             }
-        return Observable.create(new ObservableOnSubscribe<com.example.mond.rx.models.products.Result>() {
+        return Observable.create(new ObservableOnSubscribe<Product>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<com.example.mond.rx.models.products.Result> e) throws Exception {
+            public void subscribe(@NonNull ObservableEmitter<Product> e) throws Exception {
                 int page = 1;
                 int count = 0;
                 boolean isLastPage = false;
@@ -96,7 +98,7 @@ public class RepositoryImpl implements Repository {
                         for (com.example.mond.rx.models.products.Result item : results) {
                             if (filter.isAppropriate(item) && count < filter.getCount()) {
                                 ++count;
-                                e.onNext(item);
+                                e.onNext(new Product(item.getId(), item.getName()));
                             }
                         }
                         page++;

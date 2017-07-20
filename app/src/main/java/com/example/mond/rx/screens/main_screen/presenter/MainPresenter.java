@@ -6,7 +6,6 @@ import com.example.mond.rx.filters.ProductFilterByFirstLetters;
 import com.example.mond.rx.filters.StoreFilterByFirstLetters;
 import com.example.mond.rx.models.simple_models.Product;
 import com.example.mond.rx.models.simple_models.Store;
-import com.example.mond.rx.models.stores.Result;
 import com.example.mond.rx.screens.main_screen.view.MainView;
 
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Retrofit;
 
 public class MainPresenter implements BasePresenter<MainView> {
@@ -27,6 +27,9 @@ public class MainPresenter implements BasePresenter<MainView> {
     private MainView mView;
     private Retrofit mRetrofit;
     private Repository mRepository;
+
+    private Disposable mDisposableStore;
+    private Disposable mDisposableProduct;
 
     @Inject
     public MainPresenter(Retrofit retrofit, Repository repository) {
@@ -45,12 +48,13 @@ public class MainPresenter implements BasePresenter<MainView> {
     }
 
     public void setUpData() throws IOException {
-        Observable<Result> storesObservable = mRepository.getStoresByFilter(mRetrofit,
+        Observable<Store> storesObservable = mRepository.getStoresByFilter(mRetrofit,
                 new StoreFilterByFirstLetters(STORE_COUNT, STORE_SEARCH));
-        Observable<com.example.mond.rx.models.products.Result> prod
-                = (Observable<com.example.mond.rx.models.products.Result>) storesObservable
+        Observable<Product> prod
+                = (Observable<Product>) storesObservable
+//                TODO: is this a good exp to use flatMap operator in such case ?
                 .flatMap(stores -> {
-                    Observable<com.example.mond.rx.models.products.Result> products = null;
+                    Observable<Product> products = null;
                     try {
                         products = mRepository.getProductsByFilter(mRetrofit, stores.getId(),
                                 new ProductFilterByFirstLetters(PRODUCT_COUNT, PRODUCT_SEARCH));
@@ -60,14 +64,17 @@ public class MainPresenter implements BasePresenter<MainView> {
                     return products;
                 });
 
-        storesObservable.map(result -> new Store(result.getId(), result.getName()))
-                .subscribe(store -> {
+        mDisposableStore = storesObservable.subscribe(store -> {
                     mView.setStore(store);
                 });
 
-        prod.map(product -> new Product(product.getId(), product.getName()))
-                .subscribe(product -> {
+        mDisposableProduct = prod.subscribe(product -> {
                     mView.setProduct(product);
                 });
+    }
+
+    public void stopLoadingData() {
+        mDisposableStore.dispose();
+        mDisposableProduct.dispose();
     }
 }

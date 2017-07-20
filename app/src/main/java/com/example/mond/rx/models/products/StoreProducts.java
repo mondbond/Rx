@@ -3,13 +3,12 @@ package com.example.mond.rx.models.products;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mond.rx.models.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class StoreProducts implements Parcelable, Model {
+public class StoreProducts implements Parcelable {
 
     @SerializedName("status")
     @Expose

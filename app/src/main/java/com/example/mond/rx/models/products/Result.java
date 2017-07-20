@@ -4,11 +4,10 @@ package com.example.mond.rx.models.products;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mond.rx.models.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Result implements Parcelable, Model {
+public class Result implements Parcelable {
 
     @SerializedName("id")
     @Expose

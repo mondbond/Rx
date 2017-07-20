@@ -5,11 +5,10 @@ import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mond.rx.models.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Stores implements Parcelable, Model {
+public class Stores implements Parcelable {
 
     @SerializedName("status")
     @Expose
@@ -17,7 +16,7 @@ public class Stores implements Parcelable, Model {
     @SerializedName("message")
     @Expose
     private Object message;
-    @SerializedName("storesPager")
+    @SerializedName("pager")
     @Expose
     private Pager storesPager;
     @SerializedName("result")

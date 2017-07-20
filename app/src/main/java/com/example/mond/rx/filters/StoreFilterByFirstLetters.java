@@ -2,33 +2,31 @@ package com.example.mond.rx.filters;
 
 import android.util.Log;
 
-import com.example.mond.rx.models.products.Result;
-
+import com.example.mond.rx.models.stores.Result;
 
 /**
- * Created by mond on 17.07.17.
+ * Created by mond on 20.07.17.
  */
 
-public class FilterByFirstLetters implements ProductFilter {
+public class StoreFilterByFirstLetters implements StoreFilter{
 
     private int mCount;
     private String mCondition;
 
-    public FilterByFirstLetters(int mCount, String condition) {
+    public StoreFilterByFirstLetters(int mCount, String condition) {
         this.mCount = mCount;
         mCondition = condition;
     }
 
-
-    public String getmCondition() {
+    public String getCondition() {
         return mCondition;
     }
 
-    public void setmCondition(String mCondition) {
+    public void setCondition(String mCondition) {
         this.mCondition = mCondition;
     }
 
-    public void setmCount(int mCount) {
+    public void setCount(int mCount) {
         this.mCount = mCount;
     }
 
@@ -51,4 +49,6 @@ public class FilterByFirstLetters implements ProductFilter {
         Log.d("Is Appropriate", result.getName() + " - " + mCondition);
         return true;
     }
+
+
 }

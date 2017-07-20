@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.mond.rx.R;
 import com.example.mond.rx.models.products.Result;
+import com.example.mond.rx.models.simpl_models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,10 @@ import butterknife.ButterKnife;
  */
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
-    private List<Result> mProductList;
+    private List<Product> mProductList;
 
-    public ProductsAdapter (List<Result> stores) {
-        mProductList = stores;
+    public ProductsAdapter (List<Product> product) {
+        mProductList = product;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         }
     }
 
-    public void setNewProducts(List<Result> products) {
+    public void setNewProduct(List<Product> products) {
         mProductList = products;
         notifyDataSetChanged();
     }
@@ -63,7 +64,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             ButterKnife.bind(this, view);
         }
 
-        public void bind(Result products ) {
+        public void bind(Product products ) {
             productName.setText(products.getName());
         }
     }

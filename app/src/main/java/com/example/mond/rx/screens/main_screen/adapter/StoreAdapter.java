@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.rx.R;
+import com.example.mond.rx.models.simpl_models.Store;
 import com.example.mond.rx.models.stores.Result;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import butterknife.ButterKnife;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
 
-    private List<Result> mStoreList;
+    private List<Store> mStoreList;
 
-    public StoreAdapter (List<Result> stores) {
+    public StoreAdapter (List<Store> stores) {
         mStoreList = stores;
     }
 
@@ -46,7 +47,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         }
     }
 
-    public void setNewStores(List<Result> products) {
+    public void setNewStores(List<Store> products) {
         mStoreList = products;
         notifyDataSetChanged();
     }
@@ -60,8 +61,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             ButterKnife.bind(this, view);
         }
 
-        public void bind(Result accelerometerData) {
-            storeName.setText(accelerometerData.getName());
+        public void bind(Store store) {
+            storeName.setText(store.getName());
         }
     }
 }

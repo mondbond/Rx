@@ -9,6 +9,8 @@ import com.example.mond.rx.App;
 import com.example.mond.rx.R;
 import com.example.mond.rx.common.BaseActivity;
 import com.example.mond.rx.di.AppComponent;
+import com.example.mond.rx.models.simpl_models.Product;
+import com.example.mond.rx.models.simpl_models.Store;
 import com.example.mond.rx.models.stores.Result;
 import com.example.mond.rx.screens.main_screen.adapter.ProductsAdapter;
 import com.example.mond.rx.screens.main_screen.adapter.StoreAdapter;
@@ -42,8 +44,8 @@ public class MainActivity extends BaseActivity implements MainView {
     StoreAdapter mStoreAdapter;
     ProductsAdapter mProductsAdapter;
 
-    List<Result> mStores = new ArrayList<>();
-    List<com.example.mond.rx.models.products.Result> mProducts = new ArrayList<>();
+    List<Store> mStores = new ArrayList<>();
+    List<Product> mProducts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class MainActivity extends BaseActivity implements MainView {
     public void getData() {
         if (mPresenter != null) {
             try {
-                mPresenter.getData();
+                mPresenter.setUpData();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,7 +86,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void setStores(Result store) {
+    public void setStore(Store store) {
         mStores.add(store);
         if (mStoreAdapter == null) {
             mStoreAdapter = new StoreAdapter(mStores);
@@ -95,12 +97,12 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void setProducts(List<com.example.mond.rx.models.products.Result> products) {
-        mProducts.addAll(products);
+    public void setProduct(Product product) {
+        mProducts.add(product);
         if (mProductsAdapter == null) {
-            mProductsAdapter = new ProductsAdapter(products);
+            mProductsAdapter = new ProductsAdapter(mProducts);
         } else {
-            mProductsAdapter.setNewProducts(mProducts);
+            mProductsAdapter.setNewProduct(mProducts);
         }
         mProductRecycler.setAdapter(mProductsAdapter);
     }

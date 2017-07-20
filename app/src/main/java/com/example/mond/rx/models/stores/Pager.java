@@ -3,11 +3,10 @@ package com.example.mond.rx.models.stores;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mond.rx.models.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Pager implements Parcelable, Model {
+public class Pager implements Parcelable {
 
     @SerializedName("records_per_page")
     @Expose
@@ -75,9 +74,7 @@ public class Pager implements Parcelable, Model {
         public Pager[] newArray(int size) {
             return (new Pager[size]);
         }
-
-    }
-            ;
+    };
 
     public int getRecordsPerPage() {
         return recordsPerPage;

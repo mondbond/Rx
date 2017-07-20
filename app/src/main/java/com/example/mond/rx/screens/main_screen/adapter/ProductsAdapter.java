@@ -7,29 +7,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.rx.R;
-import com.example.mond.rx.models.products.Result;
-import com.example.mond.rx.models.simpl_models.Product;
+import com.example.mond.rx.models.simple_models.Product;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by mond on 14.07.17.
- */
-
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
     private List<Product> mProductList;
 
-    public ProductsAdapter (List<Product> product) {
+    public ProductsAdapter(List<Product> product) {
         mProductList = product;
     }
 
     @Override
     public ProductsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                      int viewType) {
+                                                         int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.product_item, parent, false);
 
@@ -64,7 +58,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
             ButterKnife.bind(this, view);
         }
 
-        public void bind(Product products ) {
+        public void bind(Product products) {
             productName.setText(products.getName());
         }
     }

@@ -4,8 +4,8 @@ import com.example.mond.rx.common.BasePresenter;
 import com.example.mond.rx.data.Repository;
 import com.example.mond.rx.filters.ProductFilterByFirstLetters;
 import com.example.mond.rx.filters.StoreFilterByFirstLetters;
-import com.example.mond.rx.models.simpl_models.Product;
-import com.example.mond.rx.models.simpl_models.Store;
+import com.example.mond.rx.models.simple_models.Product;
+import com.example.mond.rx.models.simple_models.Store;
 import com.example.mond.rx.models.stores.Result;
 import com.example.mond.rx.screens.main_screen.view.MainView;
 
@@ -17,6 +17,12 @@ import io.reactivex.Observable;
 import retrofit2.Retrofit;
 
 public class MainPresenter implements BasePresenter<MainView> {
+
+    private final int STORE_COUNT = 5;
+    private final String STORE_SEARCH = "A";
+
+    private final int PRODUCT_COUNT = 5;
+    private final String PRODUCT_SEARCH = "A";
 
     private MainView mView;
     private Retrofit mRetrofit;
@@ -39,54 +45,29 @@ public class MainPresenter implements BasePresenter<MainView> {
     }
 
     public void setUpData() throws IOException {
-
-            Observable<Result> storesObservable = mRepository.getStoresByFilter(mRetrofit,
-                    new StoreFilterByFirstLetters(5, "B"));
-
-            Observable<com.example.mond.rx.models.products.Result> prod
-                    =(Observable<com.example.mond.rx.models.products.Result>) storesObservable
-                    .flatMap(stores -> {
-                Observable<com.example.mond.rx.models.products.Result> products = null;
-                try {
-                     products = mRepository.getProductsByFilter(mRetrofit, stores.getId(),
-                             new ProductFilterByFirstLetters(20, "A"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return products;
-            });
+        Observable<Result> storesObservable = mRepository.getStoresByFilter(mRetrofit,
+                new StoreFilterByFirstLetters(STORE_COUNT, STORE_SEARCH));
+        Observable<com.example.mond.rx.models.products.Result> prod
+                = (Observable<com.example.mond.rx.models.products.Result>) storesObservable
+                .flatMap(stores -> {
+                    Observable<com.example.mond.rx.models.products.Result> products = null;
+                    try {
+                        products = mRepository.getProductsByFilter(mRetrofit, stores.getId(),
+                                new ProductFilterByFirstLetters(PRODUCT_COUNT, PRODUCT_SEARCH));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return products;
+                });
 
         storesObservable.map(result -> new Store(result.getId(), result.getName()))
                 .subscribe(store -> {
-            mView.setStore(store);
-        });
+                    mView.setStore(store);
+                });
 
         prod.map(product -> new Product(product.getId(), product.getName()))
                 .subscribe(product -> {
-            mView.setProduct(product);
-        });
-
-//            storesObservable.subscribe(stores -> {
-//
-//                List<Result> result = stores.getResult();
-//                List<Result> res = result.subList(0, 5);
-//                mView.setStore(res);
-//
-//                for(Result item : res){
-//                    getProductsByFilter(item.getId());
-//                }
-//            });
+                    mView.setProduct(product);
+                });
     }
-
-//    public void getProductsByFilter(int storeId) {
-//        LcboRepository repository = new LcboRepository();
-//        try {
-//            repository.getProductsByFilter(mRetrofit, storeId, 1).subscribe(products -> {
-//                List<com.example.mond.rx.models.products.Result> result = products.getResult().subList(0, 20);
-//                mView.setProduct(result);
-//            });
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

@@ -1,13 +1,6 @@
 package com.example.mond.rx.filters;
 
-import android.util.Log;
-
 import com.example.mond.rx.models.products.Result;
-
-
-/**
- * Created by mond on 17.07.17.
- */
 
 public class ProductFilterByFirstLetters implements ProductFilter {
 
@@ -19,15 +12,15 @@ public class ProductFilterByFirstLetters implements ProductFilter {
         mCondition = condition;
     }
 
-    public String getmCondition() {
+    public String getCondition() {
         return mCondition;
     }
 
-    public void setmCondition(String mCondition) {
+    public void setCondition(String mCondition) {
         this.mCondition = mCondition;
     }
 
-    public void setmCount(int mCount) {
+    public void setCount(int mCount) {
         this.mCount = mCount;
     }
 
@@ -39,15 +32,14 @@ public class ProductFilterByFirstLetters implements ProductFilter {
     @Override
     public boolean isAppropriate(Result result) {
 
-        char[] examvleByChar = result.getName().toCharArray();
+        char[] exampleByChar = result.getName().toCharArray();
         char[] conditionByChar = mCondition.toCharArray();
 
-        for(int i = 0; i < mCondition.length(); ++i) {
-            if(!String.valueOf(examvleByChar[i]).equals(String.valueOf(conditionByChar[i]))) {
+        for (int i = 0; i < mCondition.length(); ++i) {
+            if (!String.valueOf(exampleByChar[i]).equals(String.valueOf(conditionByChar[i]))) {
                 return false;
             }
         }
-        Log.d("Is Appropriate", result.getName() + " - " + mCondition);
         return true;
     }
 }

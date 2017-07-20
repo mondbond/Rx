@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.rx.R;
-import com.example.mond.rx.models.simpl_models.Store;
-import com.example.mond.rx.models.stores.Result;
+import com.example.mond.rx.models.simple_models.Store;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,13 +18,13 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
     private List<Store> mStoreList;
 
-    public StoreAdapter (List<Store> stores) {
+    public StoreAdapter(List<Store> stores) {
         mStoreList = stores;
     }
 
     @Override
     public StoreAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                  int viewType) {
+                                                      int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.store_item, parent, false);
 
@@ -61,7 +59,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             ButterKnife.bind(this, view);
         }
 
-        public void bind(Store store) {
+        void bind(Store store) {
             storeName.setText(store.getName());
         }
     }

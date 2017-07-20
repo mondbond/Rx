@@ -3,10 +3,8 @@ package com.example.mond.rx.di;
 import android.content.Context;
 
 import com.example.mond.rx.App;
-import com.example.mond.rx.data.LcboRepository;
+import com.example.mond.rx.data.RepositoryImpl;
 import com.example.mond.rx.data.Repository;
-
-import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -38,6 +36,6 @@ public class AppModule {
 
     @Provides
     Repository providesLcboRepository() {
-        return new LcboRepository();
+        return new RepositoryImpl(providesContext());
     }
 }

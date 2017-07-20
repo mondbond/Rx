@@ -1,8 +1,4 @@
-package com.example.mond.rx.models.simpl_models;
-
-/**
- * Created by mond on 20.07.17.
- */
+package com.example.mond.rx.models.simple_models;
 
 public class Store {
     int id;

@@ -60,8 +60,16 @@ public class MainPresenter implements BasePresenter<MainView> {
                 .observeOn(AndroidSchedulers.mainThread());
 
         mCompositeDisposable.add(storesObservable.subscribe(
-                store -> {mView.setStore(store);},
-                throwable -> {mView.showError(throwable.toString());}
+            store -> {
+                if(mView != null) {
+                    mView.setStore(store);
+                }
+            },
+            throwable -> {
+                if(mView != null) {
+                    mView.showError(throwable.toString());
+                }
+            }
         ));
     }
 
@@ -75,8 +83,16 @@ public class MainPresenter implements BasePresenter<MainView> {
                     .observeOn(AndroidSchedulers.mainThread());
 
             mCompositeDisposable.add(prod.subscribe(
-                    product -> {mView.setProduct(product);},
-                    throwable -> {mView.showError(throwable.toString());}
+                product -> {
+                    if(mView != null) {
+                        mView.setProduct(product);
+                    }
+                },
+                throwable -> {
+                    if(mView != null) {
+                        mView.showError(throwable.toString());
+                    }
+                }
             ));
         }
     }

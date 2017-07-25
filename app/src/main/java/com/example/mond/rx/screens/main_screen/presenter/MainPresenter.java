@@ -67,7 +67,15 @@ public class MainPresenter implements BasePresenter<MainView> {
 
     public void setUpProductsByStores(List<Store> stores) throws IOException {
 
-//        // TODO: 25.07.17 is this normal ?
+        // TODO: 25.07.17 is this normal ?
+
+        // TODO: 7/25/17 No.
+        // TODO: 7/25/17 Check this everywhere
+        // 1. You don't need to pass retrofit instance. You will just need a interface that was created by retrofit.create(Interface_Name.class);
+        // 2. You are creating multiple observables in the cycle.
+        // 3. View instance may be null (onDetach worked before you got any response)
+        // Read about rxJava operators and please look through the sample apps that were given in android chat ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
+        // Read about filtering in RxJava and use it
         for (Store item : stores) {
             Observable<Product> prod = mProductsRepository.getData(mRetrofit, item.getId(),
                     new ProductFilterByFirstLetters(PRODUCT_COUNT, PRODUCT_SEARCH))

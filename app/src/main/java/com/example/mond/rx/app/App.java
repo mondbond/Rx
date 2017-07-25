@@ -1,4 +1,4 @@
-package com.example.mond.rx;
+package com.example.mond.rx.app;
 
 import android.app.Application;
 

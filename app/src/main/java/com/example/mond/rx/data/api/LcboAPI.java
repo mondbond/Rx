@@ -1,7 +1,7 @@
-package com.example.mond.rx.retrofit;
+package com.example.mond.rx.data.api;
 
-import com.example.mond.rx.models.products.StoreProducts;
-import com.example.mond.rx.models.stores.Stores;
+import com.example.mond.rx.data.models.products.StoreProducts;
+import com.example.mond.rx.data.models.stores.Stores;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

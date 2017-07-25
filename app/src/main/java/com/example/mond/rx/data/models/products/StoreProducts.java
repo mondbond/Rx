@@ -1,14 +1,14 @@
-package com.example.mond.rx.models.stores;
+package com.example.mond.rx.data.models.products;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Stores implements Parcelable {
+import java.util.List;
+
+public class StoreProducts implements Parcelable {
 
     @SerializedName("status")
     @Expose
@@ -18,31 +18,32 @@ public class Stores implements Parcelable {
     private Object message;
     @SerializedName("pager")
     @Expose
-    private Pager storesPager;
+    private Pager pager;
     @SerializedName("result")
     @Expose
-    private List<Result> result = new ArrayList<Result>();
-    public final static Creator<Stores> CREATOR = new Creator<Stores>() {
-
+    private List<Result> result = null;
+    @SerializedName("suggestion")
+    @Expose
+    private Object suggestion;
+    public final static Creator<StoreProducts> CREATOR = new Creator<StoreProducts>() {
 
         @SuppressWarnings({
                 "unchecked"
         })
-        public Stores createFromParcel(Parcel in) {
-            Stores instance = new Stores();
+        public StoreProducts createFromParcel(Parcel in) {
+            StoreProducts instance = new StoreProducts();
             instance.status = ((int) in.readValue((int.class.getClassLoader())));
             instance.message = ((Object) in.readValue((Object.class.getClassLoader())));
-            instance.storesPager = ((Pager) in.readValue((Pager.class.getClassLoader())));
+            instance.pager = ((Pager) in.readValue((Pager.class.getClassLoader())));
             in.readList(instance.result, (Result.class.getClassLoader()));
+            instance.suggestion = ((Object) in.readValue((Object.class.getClassLoader())));
             return instance;
         }
 
-        public Stores[] newArray(int size) {
-            return (new Stores[size]);
+        public StoreProducts[] newArray(int size) {
+            return (new StoreProducts[size]);
         }
-
-    }
-            ;
+    };
 
     public int getStatus() {
         return status;
@@ -60,12 +61,12 @@ public class Stores implements Parcelable {
         this.message = message;
     }
 
-    public Pager getStoresPager() {
-        return storesPager;
+    public Pager getPager() {
+        return pager;
     }
 
-    public void setStoresPager(Pager storesPager) {
-        this.storesPager = storesPager;
+    public void setPager(Pager pager) {
+        this.pager = pager;
     }
 
     public List<Result> getResult() {
@@ -76,11 +77,20 @@ public class Stores implements Parcelable {
         this.result = result;
     }
 
+    public Object getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(Object suggestion) {
+        this.suggestion = suggestion;
+    }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(status);
         dest.writeValue(message);
-        dest.writeValue(storesPager);
+        dest.writeValue(pager);
         dest.writeList(result);
+        dest.writeValue(suggestion);
     }
 
     public int describeContents() {

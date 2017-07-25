@@ -1,13 +1,13 @@
-package com.example.mond.rx.filters;
+package com.example.mond.rx.data.filters;
 
-import com.example.mond.rx.models.stores.Result;
+import com.example.mond.rx.data.models.products.Result;
 
-public class StoreFilterByFirstLetters implements StoreFilter {
+public class ProductFilterByFirstLetters implements ProductFilter {
 
     private int mCount;
     private String mCondition;
 
-    public StoreFilterByFirstLetters(int mCount, String condition) {
+    public ProductFilterByFirstLetters(int mCount, String condition) {
         this.mCount = mCount;
         mCondition = condition;
     }

@@ -2,9 +2,13 @@ package com.example.mond.rx.di;
 
 import android.content.Context;
 
-import com.example.mond.rx.App;
-import com.example.mond.rx.data.RepositoryImpl;
-import com.example.mond.rx.data.Repository;
+import com.example.mond.rx.app.App;
+import com.example.mond.rx.BuildConfig;
+import com.example.mond.rx.data.repository.ProductRepositoryImpl;
+import com.example.mond.rx.domain.ProductsRepository;
+import com.example.mond.rx.domain.StoreRepository;
+import com.example.mond.rx.data.repository.StoreRepositoryImpl;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import dagger.Module;
 import dagger.Provides;
@@ -24,9 +28,9 @@ public class AppModule {
 //    @Named("lcboAPI")
     Retrofit providesLcboApiRetrofit() {
         return new Retrofit.Builder()
-                // TODO: 20/07/17 hide base url api keys in gradle file and use BuildConfig class
-                .baseUrl("https://lcboapi.com/")
+                .baseUrl(BuildConfig.LCBO_WEB)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
     }
 
@@ -36,7 +40,12 @@ public class AppModule {
     }
 
     @Provides
-    Repository providesLcboRepository() {
-        return new RepositoryImpl();
+    ProductsRepository providesRepositoryRepository() {
+        return new ProductRepositoryImpl();
+    }
+
+    @Provides
+    StoreRepository providesStoreRepository() {
+        return new StoreRepositoryImpl();
     }
 }

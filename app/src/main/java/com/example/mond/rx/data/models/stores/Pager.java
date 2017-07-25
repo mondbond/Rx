@@ -1,4 +1,4 @@
-package com.example.mond.rx.models.stores;
+package com.example.mond.rx.data.models.stores;
 
 import android.os.Parcel;
 import android.os.Parcelable;

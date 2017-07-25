@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.example.mond.rx.App;
+import com.example.mond.rx.app.App;
 import com.example.mond.rx.R;
 import com.example.mond.rx.common.BaseActivity;
 import com.example.mond.rx.di.AppComponent;
-import com.example.mond.rx.models.simple_models.Product;
-import com.example.mond.rx.models.simple_models.Store;
+import com.example.mond.rx.domain.models.Product;
+import com.example.mond.rx.domain.models.Store;
 import com.example.mond.rx.screens.main_screen.adapter.ProductsAdapter;
 import com.example.mond.rx.screens.main_screen.adapter.StoreAdapter;
 import com.example.mond.rx.screens.main_screen.presenter.MainPresenter;
@@ -36,7 +37,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @BindView(R.id.rc_product)
     RecyclerView mProductRecycler;
 
-    @BindView(R.id.btn_load)
+    @BindView(R.id.btn_load_stores)
     Button loadBtn;
 
     StoreAdapter mStoreAdapter;
@@ -51,6 +52,9 @@ public class MainActivity extends BaseActivity implements MainView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mStoreAdapter = new StoreAdapter(mStores);
+        mProductsAdapter = new ProductsAdapter(mProducts);
+
         mStoreRecycler.setLayoutManager(new LinearLayoutManager(this));
         mProductRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -61,9 +65,8 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // TODO: 20/07/17  attach/detach should be in onStart/onStop
+    protected void onStart() {
+        super.onStart();
         mPresenter.onAttach(this);
     }
 
@@ -73,36 +76,38 @@ public class MainActivity extends BaseActivity implements MainView {
         mPresenter.onDetach(this);
     }
 
-    @OnClick(R.id.btn_load)
-    public void getData() {
-        if(mStoreAdapter != null) {
-            if (!mStores.isEmpty() || !mProducts.isEmpty()) {
-                mPresenter.stopLoadingData();
-                mStoreAdapter.clear();
-                mProductsAdapter.clear();
-            }
+    @OnClick(R.id.btn_load_stores)
+    public void getStoreData() {
+        if (!mStores.isEmpty()) {
+            mPresenter.stopLoadingData();
+            mStoreAdapter.clear();
         }
 
-        // TODO: 20/07/17 how presenter can be null?
-        if (mPresenter != null) {
-            // TODO: 20/07/17 its to messy with exceptions
-            try {
-                mPresenter.setUpData();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            mPresenter.setUpData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnClick(R.id.btn_load_products)
+    public void getProductsData() {
+        if (!mProducts.isEmpty()) {
+            mPresenter.stopLoadingData();
+            mProductsAdapter.clear();
+        }
+
+        try {
+            mPresenter.setUpProductsByStores(mStores);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void setStore(Store store) {
         mStores.add(store);
-        // TODO: 20/07/17 init adapters once with empty data when you prepare recycler view, then you don't need null check
-        if (mStoreAdapter == null) {
-            mStoreAdapter = new StoreAdapter(mStores);
-        } else {
-            mStoreAdapter.setNewStores(mStores);
-        }
+        mStoreAdapter.setNewStores(mStores);
         mStoreRecycler.setAdapter(mStoreAdapter);
     }
 
@@ -115,5 +120,10 @@ public class MainActivity extends BaseActivity implements MainView {
             mProductsAdapter.setNewProduct(mProducts);
         }
         mProductRecycler.setAdapter(mProductsAdapter);
+    }
+
+    @Override
+    public void showError(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

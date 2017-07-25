@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.rx.R;
-import com.example.mond.rx.models.simple_models.Store;
+import com.example.mond.rx.domain.models.Store;
 
 import java.util.List;
 

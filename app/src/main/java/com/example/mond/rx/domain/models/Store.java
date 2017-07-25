@@ -1,4 +1,4 @@
-package com.example.mond.rx.models.simple_models;
+package com.example.mond.rx.domain.models;
 
 public class Store {
     int id;

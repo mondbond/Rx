@@ -1,6 +1,6 @@
-package com.example.mond.rx.filters;
+package com.example.mond.rx.data.filters;
 
-import com.example.mond.rx.models.stores.Result;
+import com.example.mond.rx.data.models.stores.Result;
 
 public interface StoreFilter {
 

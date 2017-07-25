@@ -1,4 +1,4 @@
-package com.example.mond.rx.models.products;
+package com.example.mond.rx.data.models.products;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-// TODO: 20/07/17 separate data models from presentation models, don't need to know about gson & retrofit
 public class Pager implements Parcelable {
 
     @SerializedName("records_per_page")
@@ -201,5 +200,4 @@ public class Pager implements Parcelable {
     public int describeContents() {
         return  0;
     }
-
 }

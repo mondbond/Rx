@@ -90,6 +90,9 @@ public class MainActivity extends BaseActivity implements MainView {
         }
     }
 
+    // TODO: 7/25/17 The second request will not work without the first one (because the mStores are empty). You can do multiple requests with RxJava one by one.
+    //fix this
+
     @OnClick(R.id.btn_load_products)
     public void getProductsData() {
         if (!mProducts.isEmpty()) {
@@ -97,6 +100,7 @@ public class MainActivity extends BaseActivity implements MainView {
             mProductsAdapter.clear();
         }
 
+        // TODO: 7/25/17 Please review the sample apps provided and rewrite this using the right RxJava error handling approach
         try {
             mPresenter.setUpProductsByStores(mStores);
         } catch (IOException e) {

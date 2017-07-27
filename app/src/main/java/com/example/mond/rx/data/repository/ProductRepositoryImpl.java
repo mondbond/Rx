@@ -21,6 +21,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class ProductRepositoryImpl implements ProductsRepository {
+    // TODO: 7/25/17 The same as for store repository. This usage of RxJava is bad.
+    //Read about rxJava operators and think through the logic of receiving data. This could be written in few lines of code without the try catch.
+
     @Override
     public Observable<Product> getData(final Retrofit retrofit, int storeId, ProductFilter filter)
             throws IOException {

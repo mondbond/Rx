@@ -21,6 +21,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class StoreRepositoryImpl implements StoreRepository {
+    // TODO: 7/25/17 This is very bad. Look through the samples that were provided in android chat
+    // ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
+    // TODO: 7/25/17 Why are you fetching a Call<> and the converting it to Observable<>? Retrofit can retrieve an Observable<>
+    // TODO: 7/25/17 Don't pass a Retrofit instance in here. Look in the sample how REST interface is build. Rewrite this class and the ProductsRepository using the approach from the sample apps.
+    // TODO: 7/25/17 Look in the sample apps how repository are implemented - clean and simple.
     @Override
     public Observable<Store> getData(final Retrofit retrofit, StoreFilter filter) throws IOException {
         if (filter == null) {

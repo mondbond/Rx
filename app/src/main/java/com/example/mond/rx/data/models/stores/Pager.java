@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+// TODO: 7/25/17 Why do you need to implement Parcelable? Also why do you implement this in other data models?
 public class Pager implements Parcelable {
 
     @SerializedName("records_per_page")

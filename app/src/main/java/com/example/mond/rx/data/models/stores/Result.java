@@ -1,12 +1,9 @@
 package com.example.mond.rx.data.models.stores;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Result implements Parcelable {
+public class Result {
 
     @SerializedName("id")
     @Expose
@@ -131,64 +128,6 @@ public class Result implements Parcelable {
     @SerializedName("store_no")
     @Expose
     private int storeNo;
-    public final static Creator<Result> CREATOR = new Creator<Result>() {
-
-
-        @SuppressWarnings({
-                "unchecked"
-        })
-        public Result createFromParcel(Parcel in) {
-            Result instance = new Result();
-            instance.id = ((int) in.readValue((int.class.getClassLoader())));
-            instance.isDead = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.name = ((String) in.readValue((String.class.getClassLoader())));
-            instance.tags = ((String) in.readValue((String.class.getClassLoader())));
-            instance.addressLine1 = ((String) in.readValue((String.class.getClassLoader())));
-            instance.addressLine2 = ((Object) in.readValue((Object.class.getClassLoader())));
-            instance.city = ((String) in.readValue((String.class.getClassLoader())));
-            instance.postalCode = ((String) in.readValue((String.class.getClassLoader())));
-            instance.telephone = ((String) in.readValue((String.class.getClassLoader())));
-            instance.fax = ((String) in.readValue((String.class.getClassLoader())));
-            instance.latitude = ((double) in.readValue((double.class.getClassLoader())));
-            instance.longitude = ((double) in.readValue((double.class.getClassLoader())));
-            instance.productsCount = ((int) in.readValue((int.class.getClassLoader())));
-            instance.inventoryCount = ((int) in.readValue((int.class.getClassLoader())));
-            instance.inventoryPriceInCents = ((int) in.readValue((int.class.getClassLoader())));
-            instance.inventoryVolumeInMilliliters = ((int) in.readValue((int.class.getClassLoader())));
-            instance.hasWheelchairAccessability = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasBilingualServices = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasProductConsultant = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasTastingBar = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasBeerColdRoom = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasSpecialOccasionPermits = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasVintagesCorner = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasParking = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.hasTransitAccess = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.sundayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.sundayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.mondayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.mondayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.tuesdayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.tuesdayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.wednesdayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.wednesdayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.thursdayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.thursdayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.fridayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.fridayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.saturdayOpen = ((int) in.readValue((int.class.getClassLoader())));
-            instance.saturdayClose = ((int) in.readValue((int.class.getClassLoader())));
-            instance.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
-            instance.storeNo = ((int) in.readValue((int.class.getClassLoader())));
-            return instance;
-        }
-
-        public Result[] newArray(int size) {
-            return (new Result[size]);
-        }
-
-    }
-            ;
 
     public int getId() {
         return id;
@@ -516,53 +455,5 @@ public class Result implements Parcelable {
 
     public void setStoreNo(int storeNo) {
         this.storeNo = storeNo;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
-        dest.writeValue(isDead);
-        dest.writeValue(name);
-        dest.writeValue(tags);
-        dest.writeValue(addressLine1);
-        dest.writeValue(addressLine2);
-        dest.writeValue(city);
-        dest.writeValue(postalCode);
-        dest.writeValue(telephone);
-        dest.writeValue(fax);
-        dest.writeValue(latitude);
-        dest.writeValue(longitude);
-        dest.writeValue(productsCount);
-        dest.writeValue(inventoryCount);
-        dest.writeValue(inventoryPriceInCents);
-        dest.writeValue(inventoryVolumeInMilliliters);
-        dest.writeValue(hasWheelchairAccessability);
-        dest.writeValue(hasBilingualServices);
-        dest.writeValue(hasProductConsultant);
-        dest.writeValue(hasTastingBar);
-        dest.writeValue(hasBeerColdRoom);
-        dest.writeValue(hasSpecialOccasionPermits);
-        dest.writeValue(hasVintagesCorner);
-        dest.writeValue(hasParking);
-        dest.writeValue(hasTransitAccess);
-        dest.writeValue(sundayOpen);
-        dest.writeValue(sundayClose);
-        dest.writeValue(mondayOpen);
-        dest.writeValue(mondayClose);
-        dest.writeValue(tuesdayOpen);
-        dest.writeValue(tuesdayClose);
-        dest.writeValue(wednesdayOpen);
-        dest.writeValue(wednesdayClose);
-        dest.writeValue(thursdayOpen);
-        dest.writeValue(thursdayClose);
-        dest.writeValue(fridayOpen);
-        dest.writeValue(fridayClose);
-        dest.writeValue(saturdayOpen);
-        dest.writeValue(saturdayClose);
-        dest.writeValue(updatedAt);
-        dest.writeValue(storeNo);
-    }
-
-    public int describeContents() {
-        return  0;
     }
 }

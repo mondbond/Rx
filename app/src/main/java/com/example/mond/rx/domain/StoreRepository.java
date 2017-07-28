@@ -9,5 +9,5 @@ import io.reactivex.Observable;
 import retrofit2.Retrofit;
 
 public interface StoreRepository {
-    Observable<Store> getData(final Retrofit retrofit, StoreFilter filter) throws IOException;
+    Observable<Store> getDataByFilter (StoreFilter filter) throws IOException;
 }

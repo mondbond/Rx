@@ -24,8 +24,14 @@ public class ProductRepositoryImpl implements ProductsRepository {
     // TODO: 7/25/17 The same as for store repository. This usage of RxJava is bad.
     //Read about rxJava operators and think through the logic of receiving data. This could be written in few lines of code without the try catch.
 
+    private Retrofit mRetrofit;
+
+    public ProductRepositoryImpl(Retrofit retrofit) {
+        mRetrofit = retrofit;
+    }
+
     @Override
-    public Observable<Product> getData(final Retrofit retrofit, int storeId, ProductFilter filter)
+    public Observable<Product> getDataByFilter(int storeId, ProductFilter filter)
             throws IOException {
 
             if (filter == null) {
@@ -43,7 +49,7 @@ public class ProductRepositoryImpl implements ProductsRepository {
                 List<com.example.mond.rx.data.models.products.Result> results;
 
                 while (count < filter.getCount() || isLastPage) {
-                    storeProducts = getProductsByRetrofit(retrofit, storeId, page);
+                    storeProducts = getProductsByRetrofit(mRetrofit, storeId, page);
                     if (storeProducts != null) {
 
                         isLastPage = storeProducts.getPager().isIsFinalPage();

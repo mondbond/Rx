@@ -1,12 +1,9 @@
 package com.example.mond.rx.data.models.products;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Pager implements Parcelable {
+public class Pager {
 
     @SerializedName("records_per_page")
     @Expose
@@ -47,35 +44,6 @@ public class Pager implements Parcelable {
     @SerializedName("total_pages_path")
     @Expose
     private String totalPagesPath;
-    public final static Creator<Pager> CREATOR = new Creator<Pager>() {
-
-
-        @SuppressWarnings({
-                "unchecked"
-        })
-        public Pager createFromParcel(Parcel in) {
-            Pager instance = new Pager();
-            instance.recordsPerPage = ((int) in.readValue((int.class.getClassLoader())));
-            instance.totalRecordCount = ((int) in.readValue((int.class.getClassLoader())));
-            instance.currentPageRecordCount = ((int) in.readValue((int.class.getClassLoader())));
-            instance.isFirstPage = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.isFinalPage = ((boolean) in.readValue((boolean.class.getClassLoader())));
-            instance.currentPage = ((int) in.readValue((int.class.getClassLoader())));
-            instance.currentPagePath = ((String) in.readValue((String.class.getClassLoader())));
-            instance.nextPage = ((int) in.readValue((int.class.getClassLoader())));
-            instance.nextPagePath = ((String) in.readValue((String.class.getClassLoader())));
-            instance.previousPage = ((Object) in.readValue((Object.class.getClassLoader())));
-            instance.previousPagePath = ((Object) in.readValue((Object.class.getClassLoader())));
-            instance.totalPages = ((int) in.readValue((int.class.getClassLoader())));
-            instance.totalPagesPath = ((String) in.readValue((String.class.getClassLoader())));
-            return instance;
-        }
-
-        public Pager[] newArray(int size) {
-            return (new Pager[size]);
-        }
-
-    };
 
     public int getRecordsPerPage() {
         return recordsPerPage;
@@ -179,25 +147,5 @@ public class Pager implements Parcelable {
 
     public void setTotalPagesPath(String totalPagesPath) {
         this.totalPagesPath = totalPagesPath;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(recordsPerPage);
-        dest.writeValue(totalRecordCount);
-        dest.writeValue(currentPageRecordCount);
-        dest.writeValue(isFirstPage);
-        dest.writeValue(isFinalPage);
-        dest.writeValue(currentPage);
-        dest.writeValue(currentPagePath);
-        dest.writeValue(nextPage);
-        dest.writeValue(nextPagePath);
-        dest.writeValue(previousPage);
-        dest.writeValue(previousPagePath);
-        dest.writeValue(totalPages);
-        dest.writeValue(totalPagesPath);
-    }
-
-    public int describeContents() {
-        return  0;
     }
 }

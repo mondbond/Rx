@@ -54,8 +54,7 @@ public class MainPresenter implements BasePresenter<MainView> {
     }
 
     public void setUpData() throws IOException {
-        Observable<Store> storesObservable = mStoreRepository.getData(mRetrofit,
-                new StoreFilterByFirstLetters(STORE_COUNT, STORE_SEARCH))
+        Observable<Store> storesObservable = mStoreRepository.getDataByFilter(new StoreFilterByFirstLetters(STORE_COUNT, STORE_SEARCH))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -82,10 +81,13 @@ public class MainPresenter implements BasePresenter<MainView> {
         // 1. You don't need to pass retrofit instance. You will just need a interface that was created by retrofit.create(Interface_Name.class);
         // 2. You are creating multiple observables in the cycle.
         // 3. View instance may be null (onDetach worked before you got any response)
+
+//        TODO - question. I check view before use in this method. Or It's not enough ?
+
         // Read about rxJava operators and please look through the sample apps that were given in android chat ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
         // Read about filtering in RxJava and use it
         for (Store item : stores) {
-            Observable<Product> prod = mProductsRepository.getData(mRetrofit, item.getId(),
+            Observable<Product> prod = mProductsRepository.getDataByFilter(item.getId(),
                     new ProductFilterByFirstLetters(PRODUCT_COUNT, PRODUCT_SEARCH))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());

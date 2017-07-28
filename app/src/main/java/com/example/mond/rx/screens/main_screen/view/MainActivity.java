@@ -90,8 +90,10 @@ public class MainActivity extends BaseActivity implements MainView {
         }
     }
 
-    // TODO: 7/25/17 The second request will not work without the first one (because the mStores are empty). You can do multiple requests with RxJava one by one.
+    // TODO: +? 7/25/17 The second request will not work without the first one (because the mStores are empty). You can do multiple requests with RxJava one by one.
     //fix this
+
+//    TODO - question: as I understand, I did it already in last commit. in this time I realise separate load of products.
 
     @OnClick(R.id.btn_load_products)
     public void getProductsData() {

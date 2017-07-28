@@ -1,6 +1,7 @@
 package com.example.mond.rx.data.filters;
 
 import com.example.mond.rx.data.models.stores.Result;
+import com.example.mond.rx.domain.models.Store;
 
 public class StoreFilterByFirstLetters implements StoreFilter {
 
@@ -30,9 +31,9 @@ public class StoreFilterByFirstLetters implements StoreFilter {
     }
 
     @Override
-    public boolean isAppropriate(Result result) {
+    public boolean isAppropriate(Store store) {
 
-        char[] nameByChar = result.getName().toCharArray();
+        char[] nameByChar = store.getName().toCharArray();
         char[] conditionByChar = mCondition.toCharArray();
 
         for (int i = 0; i < mCondition.length(); ++i) {

@@ -111,8 +111,8 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void setStore(Store store) {
-        mStores.add(store);
+    public void setStore(ArrayList<Store> stores) {
+        mStores.addAll(stores);
         mStoreAdapter.setNewStores(mStores);
         mStoreRecycler.setAdapter(mStoreAdapter);
     }

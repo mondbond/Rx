@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity implements MainView {
         }
 
         try {
-            mPresenter.setUpData();
+            mPresenter.setUpStoreData();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void setStore(ArrayList<Store> stores) {
-        mStores.addAll(stores);
+        mStores = stores;
         mStoreAdapter.setNewStores(mStores);
         mStoreRecycler.setAdapter(mStoreAdapter);
     }

@@ -1,6 +1,7 @@
 package com.example.mond.rx.data.filters;
 
 import com.example.mond.rx.data.models.products.Result;
+import com.example.mond.rx.domain.models.Product;
 
 public class ProductFilterByFirstLetters implements ProductFilter {
 
@@ -30,9 +31,9 @@ public class ProductFilterByFirstLetters implements ProductFilter {
     }
 
     @Override
-    public boolean isAppropriate(Result result) {
+    public boolean isAppropriate(Product product) {
 
-        char[] nameByChar = result.getName().toCharArray();
+        char[] nameByChar = product.getName().toCharArray();
         char[] conditionByChar = mCondition.toCharArray();
 
         for (int i = 0; i < mCondition.length(); ++i) {

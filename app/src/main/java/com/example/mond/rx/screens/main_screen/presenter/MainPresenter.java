@@ -14,17 +14,22 @@ import com.example.mond.rx.screens.main_screen.view.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MainPresenter implements BasePresenter<MainView> {
+
+    private final int START_PAGE = 1;
 
     private final int STORE_COUNT = 5;
     private final String STORE_SEARCH = "B";
@@ -57,27 +62,32 @@ public class MainPresenter implements BasePresenter<MainView> {
         mView = null;
     }
 
-
-
     int page = 1;
     int accepted = 0;
-    int count = 6;
+    final int count = 40;
+    boolean mIsStoreLastPage = false;
+    ArrayList<Store> mSortedStores = new ArrayList<>();
 
-    public void setUpData() throws IOException {
-
-        StoreFilterByFirstLetters filter = new StoreFilterByFirstLetters(5, "B");
-
-        ArrayList<Store> sortedStores = new ArrayList<>();
-
-        getDataByFilter(sortedStores, filter);
-
+    public void setUpStoreData() throws IOException {
+        initStoreParams();
+        StoreFilterByFirstLetters filter = new StoreFilterByFirstLetters(5, "Ba");
+        getStoreDataByFilter(mSortedStores, filter);
     }
 
-    private ArrayList<Store> getDataByFilter(ArrayList<Store> sortedStores, StoreFilter filter) throws IOException {
+    private ArrayList<Store> getStoreDataByFilter(ArrayList<Store> sortedStores, StoreFilter filter) throws IOException {
 
         mStoreRepository.getDataByFilter(page)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new Function<List<Store>, Observable<Store>>() {
+                    @Override
+                    public Observable<Store> apply(@NonNull List<Store> stores) throws Exception {
+                        if(stores.isEmpty()){
+                            mIsStoreLastPage = true;
+                        }
+                        return Observable.fromIterable(stores);
+                    }
+                })
                 .filter(store -> {return filter.isAppropriate(store);})
                 .subscribe(
                         store -> {
@@ -95,7 +105,10 @@ public class MainPresenter implements BasePresenter<MainView> {
                             if(mView != null) {
                                 if(accepted < count) {
                                     page++;
-                                    getDataByFilter(sortedStores, filter);
+                                    mView.setStore(sortedStores);
+                                    if(!mIsStoreLastPage) {
+                                        getStoreDataByFilter(sortedStores, filter);
+                                    }
                                 }else {
                                     mView.setStore(sortedStores);
                                 }
@@ -106,7 +119,73 @@ public class MainPresenter implements BasePresenter<MainView> {
         return sortedStores;
     }
 
+    private void initStoreParams() {
+        accepted = 0;
+        mIsStoreLastPage = false;
+        page = 1;
+    }
+
+    int mProductPage = 1;
+    int mProductsAccepted = 0;
+    final int mProductsCount = 40;
+    boolean mIsProductLastPage = false;
+    ArrayList<Product> mSortedProducts = new ArrayList<>();
+
+    HashMap<Integer, Integer> mStoreProducts = new HashMap<Integer, Integer>();
+
+    private void initProductsParams() {
+        mProductsAccepted = 0;
+        mIsProductLastPage = false;
+        mProductPage = 1;
+    }
+
+
     public void setUpProductsByStores(List<Store> stores) throws IOException {
+
+        ProductFilterByFirstLetters filter = new ProductFilterByFirstLetters(20, "A");
+
+        Observable.fromIterable(mSortedStores)
+//                .flatMap(store -> mProductsRepository.getProductDataByFilter(store.getId(), mProductPage))
+        .flatMap(new Function<Store, Observable<Product>>() {
+            @Override
+            public Observable<Product> apply(@NonNull Store stores) throws Exception {
+                int page = 0;
+                boolean isLastProductPage = false;
+                mProductsRepository.getProductDataByFilter(stores.getId(), page)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .flatMap(products -> {return Observable.fromIterable(products)})
+                        .filter(product -> {return filter.isAppropriate(product);})
+                        .subscribe(
+                                product -> {
+                                    if(mStoreProducts.get(stores.getId()) < count) {
+                                        mSortedProducts.add(product);
+                                        mStoreProducts.put(stores.getId(), mSortedProducts.get(stores.getId()) + 1);
+                                    }
+                                },
+                                throwable -> {
+                                    if(mView != null) {
+                                        mView.showError(throwable.toString());
+                                    }
+                                },
+                                () -> {
+                                    if(mView != null) {
+                                        if(accepted < count) {
+                                            page++;
+                                            Log.d("MORE", "==========" + "  " + sortedStores.size());
+                                            mView.setStore(sortedStores);
+                                            if(!mIsStoreLastPage) {
+                                                getStoreDataByFilter(sortedStores, filter);
+                                            }
+                                        }else {
+                                            mView.setStore(sortedStores);
+                                        }
+                                    }
+                                }
+                        );
+            }
+        });
+
         // TODO: 25.07.17 is this normal ?
         // TODO: 7/25/17 No.
         // TODO: 7/25/17 Check this everywhere
@@ -118,25 +197,6 @@ public class MainPresenter implements BasePresenter<MainView> {
 
         // Read about rxJava operators and please look through the sample apps that were given in android chat ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
         // Read about filtering in RxJava and use it
-        for (Store item : stores) {
-            Observable<Product> prod = mProductsRepository.getDataByFilter(item.getId(),
-                    new ProductFilterByFirstLetters(PRODUCT_COUNT, PRODUCT_SEARCH))
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread());
-
-            mCompositeDisposable.add(prod.subscribe(
-                product -> {
-                    if(mView != null) {
-                        mView.setProduct(product);
-                    }
-                },
-                throwable -> {
-                    if(mView != null) {
-                        mView.showError(throwable.toString());
-                    }
-                }
-            ));
-        }
     }
 
     public void stopLoadingData() {

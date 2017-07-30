@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void setProduct(Product product) {
-        mProducts.add(product);
+    public void setProduct(ArrayList<Product> products) {
+        mProducts = products;
         if (mProductsAdapter == null) {
             mProductsAdapter = new ProductsAdapter(mProducts);
         } else {

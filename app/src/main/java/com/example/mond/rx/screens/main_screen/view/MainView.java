@@ -9,7 +9,7 @@ public interface MainView {
 
     void setStore(ArrayList<Store> stores);
 
-    void setProduct(Product product);
+    void setProduct(ArrayList<Product> products);
 
     void showError(String msg);
 }

@@ -42,6 +42,12 @@ public class MainPresenter implements BasePresenter<MainView> {
     private ProductsRepository mProductsRepository;
     private StoreRepository mStoreRepository;
 
+    int page = 1;
+    int accepted = 0;
+    final int count = 40;
+    boolean mIsStoreLastPage = false;
+    ArrayList<Store> mSortedStores = new ArrayList<>();
+
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Inject
@@ -61,12 +67,6 @@ public class MainPresenter implements BasePresenter<MainView> {
     public void onDetach(MainView view) {
         mView = null;
     }
-
-    int page = 1;
-    int accepted = 0;
-    final int count = 40;
-    boolean mIsStoreLastPage = false;
-    ArrayList<Store> mSortedStores = new ArrayList<>();
 
     public void setUpStoreData() throws IOException {
         initStoreParams();
@@ -129,9 +129,11 @@ public class MainPresenter implements BasePresenter<MainView> {
     int mProductsAccepted = 0;
     final int mProductsCount = 40;
     boolean mIsProductLastPage = false;
+
     ArrayList<Product> mSortedProducts = new ArrayList<>();
 
     HashMap<Integer, Integer> mStoreProducts = new HashMap<Integer, Integer>();
+    HashMap<Integer, Integer> mStoreProductsPage = new HashMap<Integer, Integer>();
 
     private void initProductsParams() {
         mProductsAccepted = 0;
@@ -139,50 +141,14 @@ public class MainPresenter implements BasePresenter<MainView> {
         mProductPage = 1;
     }
 
-
     public void setUpProductsByStores(List<Store> stores) throws IOException {
 
-        ProductFilterByFirstLetters filter = new ProductFilterByFirstLetters(20, "A");
-
         Observable.fromIterable(mSortedStores)
-//                .flatMap(store -> mProductsRepository.getProductDataByFilter(store.getId(), mProductPage))
         .flatMap(new Function<Store, Observable<Product>>() {
             @Override
-            public Observable<Product> apply(@NonNull Store stores) throws Exception {
-                int page = 0;
-                boolean isLastProductPage = false;
-                mProductsRepository.getProductDataByFilter(stores.getId(), page)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .flatMap(products -> {return Observable.fromIterable(products)})
-                        .filter(product -> {return filter.isAppropriate(product);})
-                        .subscribe(
-                                product -> {
-                                    if(mStoreProducts.get(stores.getId()) < count) {
-                                        mSortedProducts.add(product);
-                                        mStoreProducts.put(stores.getId(), mSortedProducts.get(stores.getId()) + 1);
-                                    }
-                                },
-                                throwable -> {
-                                    if(mView != null) {
-                                        mView.showError(throwable.toString());
-                                    }
-                                },
-                                () -> {
-                                    if(mView != null) {
-                                        if(accepted < count) {
-                                            page++;
-                                            Log.d("MORE", "==========" + "  " + sortedStores.size());
-                                            mView.setStore(sortedStores);
-                                            if(!mIsStoreLastPage) {
-                                                getStoreDataByFilter(sortedStores, filter);
-                                            }
-                                        }else {
-                                            mView.setStore(sortedStores);
-                                        }
-                                    }
-                                }
-                        );
+            public Observable<Product> apply(@NonNull Store store) throws Exception {
+                loadProductsOfStore(store.getId(), START_PAGE);
+                return null;
             }
         });
 
@@ -196,7 +162,42 @@ public class MainPresenter implements BasePresenter<MainView> {
 //        TODO - question. I check view before use in this method. Or It's not enough ?
 
         // Read about rxJava operators and please look through the sample apps that were given in android chat ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
-        // Read about filtering in RxJava and use it
+    }
+
+    public void loadProductsOfStore(int storeId, int page) throws IOException {
+
+        ProductFilterByFirstLetters filter = new ProductFilterByFirstLetters(20, "A");
+        mProductsRepository.getProductDataByFilter(storeId, page)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(products -> {return Observable.fromIterable(products);})
+                .filter(product -> {return filter.isAppropriate(product);})
+                .subscribe(
+                        product -> {
+                            if(mStoreProducts.get(storeId) < count) {
+                                mSortedProducts.add(product);
+                                mStoreProducts.put(storeId, mStoreProducts.get(storeId) + 1);
+                            }
+                        },
+                        throwable -> {
+                            if(mView != null) {
+                                mView.showError(throwable.toString());
+                            }
+                        },
+                        () -> {
+                            if(mView != null) {
+                                if(mStoreProducts.get(storeId) < count) {
+                                    mStoreProductsPage.put(storeId, mStoreProductsPage.get(storeId) + 1);
+                                    mView.setProduct(mSortedProducts);
+                                    if(!mIsStoreLastPage) {
+                                        loadProductsOfStore(storeId, mStoreProductsPage.get(storeId));
+                                    }
+                                }else {
+                                    mView.setProduct(mSortedProducts);
+                                }
+                            }
+                        }
+                );
     }
 
     public void stopLoadingData() {

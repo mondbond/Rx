@@ -24,14 +24,8 @@ public class AppModule {
         this.app = app;
     }
 
-    // TODO: 7/25/17  + ? Retrofit would better be separated in NetworkModule (where you can then provide OkHttpClient and some other settings to network)
-    // also scope is missing
-    //also you may provide the GsonConverterFactory, RxJava2CallAdapterFactory separately
-
     @Provides
     Context providesContext() {
         return app.getApplicationContext();
     }
-
-
 }

@@ -1,15 +1,12 @@
 package com.example.mond.rx.data.filters;
 
-import com.example.mond.rx.data.models.products.Result;
 import com.example.mond.rx.domain.models.Product;
 
 public class ProductFilterByFirstLetters implements ProductFilter {
 
-    private int mCount;
     private String mCondition;
 
-    public ProductFilterByFirstLetters(int mCount, String condition) {
-        this.mCount = mCount;
+    public ProductFilterByFirstLetters(String condition) {
         mCondition = condition;
     }
 
@@ -19,15 +16,6 @@ public class ProductFilterByFirstLetters implements ProductFilter {
 
     public void setCondition(String mCondition) {
         this.mCondition = mCondition;
-    }
-
-    public void setCount(int mCount) {
-        this.mCount = mCount;
-    }
-
-    @Override
-    public int getCount() {
-        return mCount;
     }
 
     @Override

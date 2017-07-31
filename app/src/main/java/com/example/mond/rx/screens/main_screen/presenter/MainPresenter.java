@@ -1,7 +1,5 @@
 package com.example.mond.rx.screens.main_screen.presenter;
 
-import android.util.Log;
-
 import com.example.mond.rx.common.BasePresenter;
 import com.example.mond.rx.data.filters.StoreFilter;
 import com.example.mond.rx.domain.ProductsRepository;
@@ -12,7 +10,6 @@ import com.example.mond.rx.domain.models.Product;
 import com.example.mond.rx.domain.models.Store;
 import com.example.mond.rx.screens.main_screen.view.MainView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,35 +22,41 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
 
 public class MainPresenter implements BasePresenter<MainView> {
 
-    private final int START_PAGE = 1;
+    private final int LCBO_START_PAGE = 1;
 
     private final int STORE_COUNT = 5;
     private final String STORE_SEARCH = "B";
 
     private final int PRODUCT_COUNT = 20;
-    private final String PRODUCT_SEARCH = "A";
+    private final String PRODUCT_SEARCH = "B";
+
+    private final boolean IS_LAST_PAGE = true;
 
     private MainView mView;
-    private Retrofit mRetrofit;
     private ProductsRepository mProductsRepository;
     private StoreRepository mStoreRepository;
 
-    int page = 1;
-    int accepted = 0;
-    final int count = 40;
+    int mStorePage = 1;
+    int mStoreAccepted = 0;
     boolean mIsStoreLastPage = false;
-    ArrayList<Store> mSortedStores = new ArrayList<>();
+    ArrayList<Store> mFilteredStores = new ArrayList<>();
+
+    int mProductPage = 1;
+    int mProductsAccepted = 0;
+    boolean mIsProductLastPage = false;
+
+    HashMap<Integer, Integer> mFilteredStoreProductsCount = new HashMap<Integer, Integer>();
+    HashMap<Integer, Integer> mStoreProductsPage = new HashMap<Integer, Integer>();
+    HashMap<Integer, Boolean> mStoreProductsIsLastPage = new HashMap<Integer, Boolean>();
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Inject
-    public MainPresenter(Retrofit retrofit, StoreRepository storeRepository,
+    public MainPresenter(StoreRepository storeRepository,
                          ProductsRepository productsRepository) {
-        mRetrofit = retrofit;
         mStoreRepository = storeRepository;
         mProductsRepository = productsRepository;
     }
@@ -65,142 +68,129 @@ public class MainPresenter implements BasePresenter<MainView> {
 
     @Override
     public void onDetach(MainView view) {
+        stopLoadingData();
         mView = null;
     }
 
-    public void setUpStoreData() throws IOException {
+    public void setUpStores() {
+        stopLoadingData();
         initStoreParams();
-        StoreFilterByFirstLetters filter = new StoreFilterByFirstLetters(5, "Ba");
-        getStoreDataByFilter(mSortedStores, filter);
+        StoreFilterByFirstLetters filter = new StoreFilterByFirstLetters(STORE_SEARCH);
+        getStoresByFilterAndShow(filter);
     }
 
-    private ArrayList<Store> getStoreDataByFilter(ArrayList<Store> sortedStores, StoreFilter filter) throws IOException {
+    private void initStoreParams() {
+        mFilteredStores.clear();
+        mStoreAccepted = 0;
+        mIsStoreLastPage = false;
+        mStorePage = 1;
+    }
 
-        mStoreRepository.getDataByFilter(page)
+    private void getStoresByFilterAndShow(StoreFilter filter) {
+        mCompositeDisposable.add(mStoreRepository.getDataByFilter(mStorePage)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Function<List<Store>, Observable<Store>>() {
                     @Override
                     public Observable<Store> apply(@NonNull List<Store> stores) throws Exception {
-                        if(stores.isEmpty()){
+                        if (stores.isEmpty()) {
                             mIsStoreLastPage = true;
                         }
                         return Observable.fromIterable(stores);
                     }
                 })
-                .filter(store -> {return filter.isAppropriate(store);})
+                .filter(filter::isAppropriate)
                 .subscribe(
                         store -> {
-                            if(accepted < count) {
-                                sortedStores.add(store);
-                                accepted++;
+                            if (isNeedMoreStores()) {
+                                mView.setStore(store);
+                                mStoreAccepted++;
                             }
                         },
-                        throwable -> {
-                            if(mView != null) {
-                                mView.showError(throwable.toString());
-                            }
-                        },
+                        this::showError,
                         () -> {
-                            if(mView != null) {
-                                if(accepted < count) {
-                                    page++;
-                                    mView.setStore(sortedStores);
-                                    if(!mIsStoreLastPage) {
-                                        getStoreDataByFilter(sortedStores, filter);
-                                    }
-                                }else {
-                                    mView.setStore(sortedStores);
+                            if (isNeedMoreStores()) {
+                                mStorePage++;
+                                if (!mIsStoreLastPage) {
+                                    getStoresByFilterAndShow(filter);
                                 }
                             }
                         }
-                );
-
-        return sortedStores;
+                ));
     }
 
-    private void initStoreParams() {
-        accepted = 0;
-        mIsStoreLastPage = false;
-        page = 1;
-    }
+    public void setUpProductsByStores(List<Store> stores) {
 
-    int mProductPage = 1;
-    int mProductsAccepted = 0;
-    final int mProductsCount = 40;
-    boolean mIsProductLastPage = false;
+        initProductsParams(stores);
 
-    ArrayList<Product> mSortedProducts = new ArrayList<>();
-
-    HashMap<Integer, Integer> mStoreProducts = new HashMap<Integer, Integer>();
-    HashMap<Integer, Integer> mStoreProductsPage = new HashMap<Integer, Integer>();
-
-    private void initProductsParams() {
-        mProductsAccepted = 0;
-        mIsProductLastPage = false;
-        mProductPage = 1;
-    }
-
-    public void setUpProductsByStores(List<Store> stores) throws IOException {
-
-        Observable.fromIterable(mSortedStores)
-        .flatMap(new Function<Store, Observable<Product>>() {
-            @Override
-            public Observable<Product> apply(@NonNull Store store) throws Exception {
-                loadProductsOfStore(store.getId(), START_PAGE);
-                return null;
-            }
+        Observable.fromIterable(stores).forEach(store -> {
+            loadStoreProductsByFilterAndShow(store.getId(), LCBO_START_PAGE);
         });
-
-        // TODO: 25.07.17 is this normal ?
-        // TODO: 7/25/17 No.
-        // TODO: 7/25/17 Check this everywhere
-        // 1. You don't need to pass retrofit instance. You will just need a interface that was created by retrofit.create(Interface_Name.class);
-        // 2. You are creating multiple observables in the cycle.
-        // 3. View instance may be null (onDetach worked before you got any response)
-
-//        TODO - question. I check view before use in this method. Or It's not enough ?
-
-        // Read about rxJava operators and please look through the sample apps that were given in android chat ("https://github.com/EugeneYovbak/ReactiveApp", "https://Zolotar_Oleg@bitbucket.org/Zolotar_Oleg/hitbtc.git")
     }
 
-    public void loadProductsOfStore(int storeId, int page) throws IOException {
+    private void initProductsParams(List<Store> stores) {
+        mProductsAccepted = 0;
+        mIsProductLastPage = !IS_LAST_PAGE;
+        mProductPage = 1;
 
-        ProductFilterByFirstLetters filter = new ProductFilterByFirstLetters(20, "A");
-        mProductsRepository.getProductDataByFilter(storeId, page)
+        mFilteredStoreProductsCount.clear();
+        mStoreProductsPage.clear();
+        mStoreProductsIsLastPage.clear();
+
+        for (Store item : stores) {
+            mFilteredStoreProductsCount.put(item.getId(), 0);
+            mStoreProductsPage.put(item.getId(), 1);
+            mStoreProductsIsLastPage.put(item.getId(), !IS_LAST_PAGE);
+        }
+    }
+
+    public void loadStoreProductsByFilterAndShow(int storeId, int page) {
+        ProductFilterByFirstLetters filter = new ProductFilterByFirstLetters(PRODUCT_SEARCH);
+        mCompositeDisposable.add(mProductsRepository.getProductDataByFilter(storeId, page)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(products -> {return Observable.fromIterable(products);})
-                .filter(product -> {return filter.isAppropriate(product);})
+                .flatMap(new Function<List<Product>, Observable<Product>>() {
+                    @Override
+                    public Observable<Product> apply(@NonNull List<Product> products) throws Exception {
+                        if (products.isEmpty()) {
+                            mStoreProductsIsLastPage.put(storeId, IS_LAST_PAGE);
+                        }
+                        return Observable.fromIterable(products);
+                    }
+                })
+                .filter(filter::isAppropriate)
                 .subscribe(
                         product -> {
-                            if(mStoreProducts.get(storeId) < count) {
-                                mSortedProducts.add(product);
-                                mStoreProducts.put(storeId, mStoreProducts.get(storeId) + 1);
+                            if (isNeedMoreProducts(storeId)) {
+                                mView.setProduct(product);
+                                mFilteredStoreProductsCount.put(storeId, mFilteredStoreProductsCount.get(storeId) + 1);
                             }
                         },
-                        throwable -> {
-                            if(mView != null) {
-                                mView.showError(throwable.toString());
-                            }
-                        },
+                        this::showError,
                         () -> {
-                            if(mView != null) {
-                                if(mStoreProducts.get(storeId) < count) {
-                                    mStoreProductsPage.put(storeId, mStoreProductsPage.get(storeId) + 1);
-                                    mView.setProduct(mSortedProducts);
-                                    if(!mIsStoreLastPage) {
-                                        loadProductsOfStore(storeId, mStoreProductsPage.get(storeId));
-                                    }
-                                }else {
-                                    mView.setProduct(mSortedProducts);
+                            if (isNeedMoreProducts(storeId)) {
+                                mStoreProductsPage.put(storeId, mStoreProductsPage.get(storeId) + 1);
+                                if (!mStoreProductsIsLastPage.get(storeId)) {
+                                    loadStoreProductsByFilterAndShow(storeId, mStoreProductsPage.get(storeId));
                                 }
                             }
                         }
-                );
+                ));
+    }
+
+    private void showError(Throwable t) {
+        mView.showError(t.toString());
     }
 
     public void stopLoadingData() {
         mCompositeDisposable.clear();
+    }
+
+    private boolean isNeedMoreStores() {
+        return mStoreAccepted < STORE_COUNT;
+    }
+
+    private boolean isNeedMoreProducts(int storeId) {
+        return mFilteredStoreProductsCount.get(storeId) < PRODUCT_COUNT;
     }
 }

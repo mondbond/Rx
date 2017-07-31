@@ -16,7 +16,6 @@ import com.example.mond.rx.screens.main_screen.adapter.ProductsAdapter;
 import com.example.mond.rx.screens.main_screen.adapter.StoreAdapter;
 import com.example.mond.rx.screens.main_screen.presenter.MainPresenter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +56,10 @@ public class MainActivity extends BaseActivity implements MainView {
 
         mStoreRecycler.setLayoutManager(new LinearLayoutManager(this));
         mProductRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mStoreRecycler.setAdapter(mStoreAdapter);
+        mProductRecycler.setAdapter(mProductsAdapter);
+
     }
 
     @Override
@@ -79,53 +82,33 @@ public class MainActivity extends BaseActivity implements MainView {
     @OnClick(R.id.btn_load_stores)
     public void getStoreData() {
         if (!mStores.isEmpty()) {
+            mStores.clear();
             mPresenter.stopLoadingData();
             mStoreAdapter.clear();
         }
-
-        try {
-            mPresenter.setUpStoreData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mPresenter.setUpStores();
     }
-
-    // TODO: +? 7/25/17 The second request will not work without the first one (because the mStores are empty). You can do multiple requests with RxJava one by one.
-    //fix this
-
-//    TODO - question: as I understand, I did it already in last commit. in this time I realise separate load of products.
 
     @OnClick(R.id.btn_load_products)
     public void getProductsData() {
         if (!mProducts.isEmpty()) {
+            mProducts.clear();
             mPresenter.stopLoadingData();
             mProductsAdapter.clear();
         }
-
-        // TODO: 7/25/17 Please review the sample apps provided and rewrite this using the right RxJava error handling approach
-        try {
-            mPresenter.setUpProductsByStores(mStores);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mPresenter.setUpProductsByStores(mStores);
     }
 
     @Override
-    public void setStore(ArrayList<Store> stores) {
-        mStores = stores;
+    public void setStore(Store store) {
+        mStores.add(store);
         mStoreAdapter.setNewStores(mStores);
-        mStoreRecycler.setAdapter(mStoreAdapter);
     }
 
     @Override
-    public void setProduct(ArrayList<Product> products) {
-        mProducts = products;
-        if (mProductsAdapter == null) {
-            mProductsAdapter = new ProductsAdapter(mProducts);
-        } else {
-            mProductsAdapter.setNewProduct(mProducts);
-        }
-        mProductRecycler.setAdapter(mProductsAdapter);
+    public void setProduct(Product product) {
+        mProducts.add(product);
+        mProductsAdapter.setNewProduct(mProducts);
     }
 
     @Override

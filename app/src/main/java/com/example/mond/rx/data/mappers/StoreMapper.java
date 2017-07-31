@@ -13,7 +13,7 @@ public class StoreMapper implements Function<List<Result>, List<Store>> {
     @Override
     public List<Store> apply(@NonNull List<Result> results) throws Exception {
         ArrayList<Store> stores = new ArrayList<>();
-        for(Result result : results) {
+        for (Result result : results) {
             stores.add(new Store(result.getId(), result.getName()));
         }
         return stores;

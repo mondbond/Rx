@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
 
     @Provides
+        // TODO: 01/08/17 should be singleton
 //    @Named("lcboAPI")
     Retrofit providesLcboApiRetrofit() {
         return new Retrofit.Builder()
@@ -26,12 +27,18 @@ public class NetworkModule {
     }
 
     @Provides
+
+        // TODO: 01/08/17 should be singleton
+        // todo LcboAPI can be used instead of retrofit
     ProductsRepository providesRepositoryRepository() {
+//        ProductsRepository providesRepositoryRepository(Retrofit retrofit) {
+        // TODO: 01/08/17 you already has this component in your dependency graph, you need to be more attentive
         return new ProductRepositoryImpl(providesLcboApiRetrofit());
     }
-
     @Provides
+        // TODO: 01/08/17 should be singleton
     StoreRepository providesStoreRepository() {
+        // TODO: 01/08/17 you already has this component in your dependency graph
         return new StoreRepositoryImpl(providesLcboApiRetrofit());
     }
 }

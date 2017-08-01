@@ -9,6 +9,7 @@ import java.util.List;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
+// TODO: 01/08/17 check ProductMapper
 public class StoreMapper implements Function<List<Result>, List<Store>> {
     @Override
     public List<Store> apply(@NonNull List<Result> results) throws Exception {

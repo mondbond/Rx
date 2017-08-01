@@ -81,6 +81,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @OnClick(R.id.btn_load_stores)
     public void getStoreData() {
+        // TODO: 01/08/17 data analyse should be in presenter, not view
         if (!mStores.isEmpty()) {
             mStores.clear();
             mPresenter.stopLoadingData();
@@ -91,6 +92,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @OnClick(R.id.btn_load_products)
     public void getProductsData() {
+        // TODO: 01/08/17 data analyse should be in presenter, not view
         if (!mProducts.isEmpty()) {
             mProducts.clear();
             mPresenter.stopLoadingData();

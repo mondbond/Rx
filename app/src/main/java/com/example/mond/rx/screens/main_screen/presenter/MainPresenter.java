@@ -178,6 +178,7 @@ public class MainPresenter implements BasePresenter<MainView> {
                 ));
     }
 
+    // TODO: 01/08/17 be more specific when to show error storesLoadingError(), productsLoadingError(), missingInternetError()
     private void showError(Throwable t) {
         mView.showError(t.toString());
     }

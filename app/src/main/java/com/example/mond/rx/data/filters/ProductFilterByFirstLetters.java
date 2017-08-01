@@ -20,7 +20,7 @@ public class ProductFilterByFirstLetters implements ProductFilter {
 
     @Override
     public boolean isAppropriate(Product product) {
-
+        // TODO: 01/08/17 wtf?? what do you do here???
         char[] nameByChar = product.getName().toCharArray();
         char[] conditionByChar = mCondition.toCharArray();
 

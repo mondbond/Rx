@@ -1,11 +1,14 @@
 package com.example.mond.rx.di;
 
 import com.example.mond.rx.BuildConfig;
+import com.example.mond.rx.data.api.LcboAPI;
 import com.example.mond.rx.data.repository.ProductRepositoryImpl;
 import com.example.mond.rx.data.repository.StoreRepositoryImpl;
 import com.example.mond.rx.domain.ProductsRepository;
 import com.example.mond.rx.domain.StoreRepository;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
 
     @Provides
-        // TODO: 01/08/17 should be singleton
+    @Singleton
 //    @Named("lcboAPI")
     Retrofit providesLcboApiRetrofit() {
         return new Retrofit.Builder()
@@ -27,18 +30,20 @@ public class NetworkModule {
     }
 
     @Provides
-
-        // TODO: 01/08/17 should be singleton
-        // todo LcboAPI can be used instead of retrofit
-    ProductsRepository providesRepositoryRepository() {
-//        ProductsRepository providesRepositoryRepository(Retrofit retrofit) {
-        // TODO: 01/08/17 you already has this component in your dependency graph, you need to be more attentive
-        return new ProductRepositoryImpl(providesLcboApiRetrofit());
+    @Singleton
+    LcboAPI providesLcboAPI(Retrofit retrofit){
+        return retrofit.create(LcboAPI.class);
     }
+
     @Provides
-        // TODO: 01/08/17 should be singleton
+    @Singleton
+    ProductsRepository providesProductRepository() {
+        return new ProductRepositoryImpl(providesLcboAPI(providesLcboApiRetrofit()));
+    }
+
+    @Provides
+    @Singleton
     StoreRepository providesStoreRepository() {
-        // TODO: 01/08/17 you already has this component in your dependency graph
-        return new StoreRepositoryImpl(providesLcboApiRetrofit());
+        return new StoreRepositoryImpl(providesLcboAPI(providesLcboApiRetrofit()));
     }
 }

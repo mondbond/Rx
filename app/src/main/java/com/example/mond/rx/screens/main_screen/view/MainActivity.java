@@ -16,7 +16,6 @@ import com.example.mond.rx.screens.main_screen.adapter.ProductsAdapter;
 import com.example.mond.rx.screens.main_screen.adapter.StoreAdapter;
 import com.example.mond.rx.screens.main_screen.presenter.MainPresenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,8 +41,6 @@ public class MainActivity extends BaseActivity implements MainView {
     StoreAdapter mStoreAdapter;
     ProductsAdapter mProductsAdapter;
 
-    List<Store> mStores = new ArrayList<>();
-    List<Product> mProducts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +48,8 @@ public class MainActivity extends BaseActivity implements MainView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mStoreAdapter = new StoreAdapter(mStores);
-        mProductsAdapter = new ProductsAdapter(mProducts);
+        mStoreAdapter = new StoreAdapter(null);
+        mProductsAdapter = new ProductsAdapter(null);
 
         mStoreRecycler.setLayoutManager(new LinearLayoutManager(this));
         mProductRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -81,40 +78,41 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @OnClick(R.id.btn_load_stores)
     public void getStoreData() {
-        // TODO: 01/08/17 data analyse should be in presenter, not view
-        if (!mStores.isEmpty()) {
-            mStores.clear();
-            mPresenter.stopLoadingData();
-            mStoreAdapter.clear();
-        }
         mPresenter.setUpStores();
     }
 
     @OnClick(R.id.btn_load_products)
     public void getProductsData() {
-        // TODO: 01/08/17 data analyse should be in presenter, not view
-        if (!mProducts.isEmpty()) {
-            mProducts.clear();
-            mPresenter.stopLoadingData();
-            mProductsAdapter.clear();
-        }
-        mPresenter.setUpProductsByStores(mStores);
+        mPresenter.setUpProductsByStores();
     }
 
     @Override
-    public void setStore(Store store) {
-        mStores.add(store);
-        mStoreAdapter.setNewStores(mStores);
+    public void setStore(List<Store> stores) {
+        mStoreAdapter.setNewStores(stores);
     }
 
     @Override
-    public void setProduct(Product product) {
-        mProducts.add(product);
-        mProductsAdapter.setNewProduct(mProducts);
+    public void setProduct(List<Product> products) {
+        mProductsAdapter.setNewProduct(products);
     }
 
     @Override
     public void showError(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showStoresLoadingError() {
+        Toast.makeText(this, "Stores loading error", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showProductsLoadingError() {
+        Toast.makeText(this, "Products loading error", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showMissingInternetError() {
+        Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
     }
 }

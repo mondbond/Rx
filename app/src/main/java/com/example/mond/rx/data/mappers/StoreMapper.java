@@ -9,14 +9,9 @@ import java.util.List;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
-// TODO: 01/08/17 check ProductMapper
-public class StoreMapper implements Function<List<Result>, List<Store>> {
+public class StoreMapper implements Function<Result, Store> {
     @Override
-    public List<Store> apply(@NonNull List<Result> results) throws Exception {
-        ArrayList<Store> stores = new ArrayList<>();
-        for (Result result : results) {
-            stores.add(new Store(result.getId(), result.getName()));
-        }
-        return stores;
+    public Store apply(@NonNull Result result) throws Exception {
+        return new Store(result.getId(), result.getName());
     }
 }

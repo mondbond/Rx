@@ -1,4 +1,4 @@
-package com.example.mond.rx.data.filters;
+package com.example.mond.rx.domain;
 
 import com.example.mond.rx.domain.models.Store;
 

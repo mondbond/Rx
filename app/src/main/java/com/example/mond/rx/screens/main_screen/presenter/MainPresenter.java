@@ -1,7 +1,7 @@
 package com.example.mond.rx.screens.main_screen.presenter;
 
 import com.example.mond.rx.common.BasePresenter;
-import com.example.mond.rx.data.filters.StoreFilter;
+import com.example.mond.rx.domain.StoreFilter;
 import com.example.mond.rx.domain.ProductsRepository;
 import com.example.mond.rx.domain.StoreRepository;
 import com.example.mond.rx.data.filters.ProductFilterByFirstLetters;
@@ -9,7 +9,9 @@ import com.example.mond.rx.data.filters.StoreFilterByFirstLetters;
 import com.example.mond.rx.domain.models.Product;
 import com.example.mond.rx.domain.models.Store;
 import com.example.mond.rx.screens.main_screen.view.MainView;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,9 @@ public class MainPresenter implements BasePresenter<MainView> {
     HashMap<Integer, Integer> mStoreProductsPage = new HashMap<Integer, Integer>();
     HashMap<Integer, Boolean> mStoreProductsIsLastPage = new HashMap<Integer, Boolean>();
 
+    List<Store> mStores = new ArrayList<>();
+    List<Product> mProducts = new ArrayList<>();
+
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Inject
@@ -73,10 +78,24 @@ public class MainPresenter implements BasePresenter<MainView> {
     }
 
     public void setUpStores() {
+        if (!mStores.isEmpty()) {
+            mStores.clear();
+        }
         stopLoadingData();
         initStoreParams();
         StoreFilterByFirstLetters filter = new StoreFilterByFirstLetters(STORE_SEARCH);
         getStoresByFilterAndShow(filter);
+    }
+
+    public void setUpProductsByStores() {
+        if (!mProducts.isEmpty()) {
+            mProducts.clear();
+        }
+        stopLoadingData();
+        initProductsParams(mStores);
+        Observable.fromIterable(mStores).forEach(store -> {
+            loadStoreProductsByFilterAndShow(store.getId(), LCBO_START_PAGE);
+        });
     }
 
     private void initStoreParams() {
@@ -103,11 +122,18 @@ public class MainPresenter implements BasePresenter<MainView> {
                 .subscribe(
                         store -> {
                             if (isNeedMoreStores()) {
-                                mView.setStore(store);
+                                mStores.add(store);
+                                mView.setStore(mStores);
                                 mStoreAccepted++;
                             }
                         },
-                        this::showError,
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                mView.showStoresLoadingError();
+                            } else if (throwable instanceof IOException) {
+                                mView.showMissingInternetError();
+                            }
+                        },
                         () -> {
                             if (isNeedMoreStores()) {
                                 mStorePage++;
@@ -117,15 +143,6 @@ public class MainPresenter implements BasePresenter<MainView> {
                             }
                         }
                 ));
-    }
-
-    public void setUpProductsByStores(List<Store> stores) {
-
-        initProductsParams(stores);
-
-        Observable.fromIterable(stores).forEach(store -> {
-            loadStoreProductsByFilterAndShow(store.getId(), LCBO_START_PAGE);
-        });
     }
 
     private void initProductsParams(List<Store> stores) {
@@ -162,11 +179,18 @@ public class MainPresenter implements BasePresenter<MainView> {
                 .subscribe(
                         product -> {
                             if (isNeedMoreProducts(storeId)) {
-                                mView.setProduct(product);
+                                mProducts.add(product);
+                                mView.setProduct(mProducts);
                                 mFilteredStoreProductsCount.put(storeId, mFilteredStoreProductsCount.get(storeId) + 1);
                             }
                         },
-                        this::showError,
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                mView.showProductsLoadingError();
+                            } else if (throwable instanceof IOException) {
+                                mView.showMissingInternetError();
+                            }
+                        },
                         () -> {
                             if (isNeedMoreProducts(storeId)) {
                                 mStoreProductsPage.put(storeId, mStoreProductsPage.get(storeId) + 1);
@@ -178,7 +202,6 @@ public class MainPresenter implements BasePresenter<MainView> {
                 ));
     }
 
-    // TODO: 01/08/17 be more specific when to show error storesLoadingError(), productsLoadingError(), missingInternetError()
     private void showError(Throwable t) {
         mView.showError(t.toString());
     }
